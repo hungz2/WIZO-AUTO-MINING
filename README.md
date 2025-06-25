@@ -1,3 +1,3 @@
 # WizoAutoBot-NTE
-Full Tutorial Join https://t.me/NTExhaust
+Full Tutorial Join t.me/Frankkk_Z
 # WIZO-AUTO-MINING

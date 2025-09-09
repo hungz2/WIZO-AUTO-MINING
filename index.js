@@ -12,7 +12,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEBUG = process.argv.includes('--debug') || process.env.DEBUG === '1';
 // Supabase credentials provided by user
 const SUPABASE_APIKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlueW14c3ZwbWtmd25sbW93enBpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzgzMzUsImV4cCI6MjA2NzMxNDMzNX0.I6h-3zEJOCygSD7W039PGnGEGeV3vzA7ZGOYJBWqpd0';
-const SUPABASE_AUTHORIZATION = 'Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IlBaTDFvTU04WHNvNURRdEsiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2lueW14c3ZwbWtmd25sbW93enBpLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJhYTc5NzcxNC0yMmE2LTQxMWQtOTU0Mi0xNTU4MWMyMzM1MmEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzU3NDA2NDk1LCJpYXQiOjE3NTc0MDI4OTUsImVtYWlsIjoiY2F5b2l0b0BnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6Imdvb2dsZSIsInByb3ZpZGVycyI6WyJnb29nbGUiXX0sInVzZXJfbWV0YWRhdGEiOnsiYXZhdGFyX3VybCI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0xjTFJKUmp6dmcyVnRLNGxSa3BPTXBGUDg0b1BJNGZfUDROckhyVTYyUm50NGtLeTJxPXM5Ni1jIiwiZW1haWwiOiJjYXlvaXRvQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmdWxsX25hbWUiOiJIw7luZyBNYWkiLCJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYW1lIjoiSMO5bmcgTWFpIiwicGhvbmVfdmVyaWZpZWQiOmZhbHNlLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jTGNMUkpSanp2ZzJWdEs0bFJrcE9NcEZQODRvUEk0Zl9QNE5ySHJVNjJSbnQ0a0t5MnE9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwNDI4MjU4NzkxOTI3MDQ4MzA0NyIsInN1YiI6IjEwNDI4MjU4NzkxOTI3MDQ4MzA0NyJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im9hdXRoIiwidGltZXN0YW1wIjoxNzU0NTUzMTA1fV0sInNlc3Npb25faWQiOiI0MGMwYWVhOS1lNDQwLTQ2NTEtOTdmZS1mNzc0YWQwODQzMWUiLCJpc19hbm9ueW1vdXMiOmZhbHNlfQ.A1o86GaX75bnVsDnSbadyBWzQ7Ap_aJhwgMRUlCWXt8';
 
 class WizoMiner {
   static allTokens = [];
@@ -108,7 +107,8 @@ class WizoMiner {
           'accept-encoding': 'gzip, deflate, br, zstd',
           'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
           'apikey': SUPABASE_APIKEY,
-          'authorization': SUPABASE_AUTHORIZATION,
+          // Lấy Authorization từ token hiện tại (đọc từ token.json khi khởi tạo)
+          'authorization': `Bearer ${this.token}`,
           'cache-control': 'no-cache',
           'content-type': 'application/json;charset=UTF-8',
           'origin': 'https://wizolayer.app',
@@ -322,7 +322,7 @@ class WizoMiner {
     if (this.miningInterval) clearInterval(this.miningInterval);
     this.miningInterval = setInterval(async () => {
       try {
-        await axios.post('https://inymxsvpmkfwnlmowzpi.supabase.co/rest/v1/rpc/sync_mining', {}, {
+        await axios.post('https://api.wizolayer.app/api/mining/sync', {}, {
           headers: this.getHeaders(),
           ...(this.proxy ? {
             httpsAgent: this.proxy.type === 'socks5' ? new SocksProxyAgent(this.proxy.url) : new HttpsProxyAgent(this.proxy.url),
